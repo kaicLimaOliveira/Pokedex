@@ -1,0 +1,341 @@
+{
+    "pokemons": [
+        {
+            "id": 1,
+            "name": "Bulbasaur",
+            "type": "grama",
+            "image": "001.png",
+            "evolution": [
+                2,
+                3
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 2,
+            "name": "Ivysaur",
+            "type": "grama",
+            "image": "002.png",
+            "evolution": [
+                3
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 10,
+                "agility": 20,
+                "attack": 10,
+                "defense": 75
+            }
+        },
+        {
+            "id": 3,
+            "name": "Venusaur",
+            "type": "grama",
+            "image": "003.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 50,
+                "agility": 20,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 4,
+            "name": "Charmander",
+            "type": "fogo",
+            "image": "004.png",
+            "evolution": [
+                5,
+                6
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 5,
+            "name": "Charmeleon",
+            "type": "fogo",
+            "image": "005.png",
+            "evolution": [
+                6
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 6,
+            "name": "Charizard",
+            "type": "fogo",
+            "image": "006.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 7,
+            "name": "Squirtle",
+            "type": "agua",
+            "image": "007.png",
+            "evolution": [
+                8,
+                9
+            ],
+            "abilitys": [
+                "Jato de água",
+                "Mergulho",
+                "Cabeçada"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 8,
+            "name": "Wartortle",
+            "type": "agua",
+            "image": "008.png",
+            "evolution": [
+                9
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 9,
+            "name": "Blastoise",
+            "type": "agua",
+            "image": "009.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 10,
+            "name": "Caterpie",
+            "type": "inseto",
+            "image": "010.png",
+            "evolution": [
+                11,
+                12
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 11,
+            "name": "Metapod",
+            "type": "inseto",
+            "image": "011.png",
+            "evolution": [
+                12
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 12,
+            "name": "Butterfree",
+            "type": "inseto",
+            "image": "012.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 13,
+            "name": "Weedle",
+            "type": "inseto",
+            "image": "013.png",
+            "evolution": [
+                14,
+                15
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 14,
+            "name": "Kakuna",
+            "type": "inseto",
+            "image": "014.png",
+            "evolution": [
+                15
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 15,
+            "name": "Beedrill",
+            "type": "inseto",
+            "image": "015.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 16,
+            "name": "Pidgey",
+            "type": "normal",
+            "image": "016.png",
+            "evolution": [
+                17,
+                18
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 17,
+            "name": "Pidgeotto",
+            "type": "normal",
+            "image": "017.png",
+            "evolution": [
+                18
+            ],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        },
+        {
+            "id": 18,
+            "name": "Pidgeot",
+            "type": "normal",
+            "image": "018.png",
+            "evolution": [],
+            "abilitys": [
+                "Ataque fúria",
+                "Esquivar"
+            ],
+            "status": {
+                "force": 30,
+                "agility": 40,
+                "attack": 20,
+                "defense": 25
+            }
+        }
+    ]
+}
