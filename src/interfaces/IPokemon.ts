@@ -13,6 +13,7 @@ interface IPokemon {
     pokemons: Emp[];
     ordered?: number;
     namePokemon?: string;
+    pokemonsPromises?: Array<Promise<any>>
 }
 
 interface P {

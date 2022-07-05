@@ -116,10 +116,10 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="pokedex-catalogo">
-            <!-- início listagem dinâmica -->
-            <TransitionGroup name="ordered">
+        <!-- <div class="row">
+          <div class="pokedex-catalogo"> -->
+        <!-- início listagem dinâmica -->
+        <!-- <TransitionGroup name="ordered">
               <div
                 v-for="p in state.pokemons"
                 :key="p.id"
@@ -137,6 +137,37 @@
                   </Transition>
                 </div>
               </div>
+            </TransitionGroup> -->
+        <!-- fim listagem dinâmica -->
+        <!-- </div>
+        </div> -->
+
+        <div class="row mt-5">
+          <div class="pokedex-catalogo">
+            <!-- início listagem dinâmica -->
+            <TransitionGroup name="ordered">
+              <div
+                v-for="pokemon in state.pokemonsPromises"
+                :key="pokemon.id"
+                :class="`cartao-pokemon bg-${pokemon.types[0].type.name}`"
+                @click="analyzePokemon(pokemon)"
+              >
+                <h1>{{ pokemon.id }} {{ pokemon.name }}</h1>
+                <span class="" v-for="info in pokemon.types" :key="info.slot">
+                  {{ info.type.name }}
+                </span>
+
+                <div class="cartao-pokemon-img">
+                  <Transition
+                    appear
+                    enter-active-class="animate__animated animate__fadeInDown"
+                  >
+                    <img
+                      :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`"
+                    />
+                  </Transition>
+                </div>
+              </div>
             </TransitionGroup>
             <!-- fim listagem dinâmica -->
           </div>
@@ -148,7 +179,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed } from "vue";
+import { reactive, watch } from "vue";
 import { IPokemon, P } from "../interfaces/IPokemon";
 
 const state: IPokemon = reactive({
@@ -158,6 +189,7 @@ const state: IPokemon = reactive({
   pokemons: [],
   ordered: 0,
   namePokemon: "",
+  pokemonsPromises: [],
 });
 
 watch(
@@ -201,30 +233,46 @@ watch(
   }
 );
 
-function getPokemons() {
-  fetch("http://localhost:3000/pokemons")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      state.pokemons = data;
-    });
-}
+// function getPokemons() {
+//   fetch("http://localhost:3000/pokemons")
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((data) => {
+//       state.pokemons = data;
+//     });
+// }
 
-getPokemons();
+// getPokemons();
 
-function analyzePokemon(p: P): void {
+const fetchPokemon = async () => {
+  const getPokemonUrl = (id: number) =>
+    `https://pokeapi.co/api/v2/pokemon/${id}`;
+
+  const promises = [];
+
+  for (let index = 1; index <= 150; index++) {
+    const response = await fetch(getPokemonUrl(index));
+    promises.push(response.json());
+  }
+
+  state.pokemonsPromises = await Promise.all(promises);
+};
+
+fetchPokemon();
+
+function analyzePokemon(pokemon: P): void {
   let changePokemonAnalysis = false;
 
-  if (state.pokemon.id != p.id && state.display) {
+  if (pokemon.id && state.display) {
     setTimeout(() => {
-      analyzePokemon(p);
+      analyzePokemon(pokemon);
     }, 1000);
 
     changePokemonAnalysis = true;
   }
 
-  state.pokemon = p;
+  state.pokemon = pokemon;
   state.display = !state.display;
   state.displayEvolution = !state.displayEvolution;
 
@@ -271,12 +319,10 @@ function removeAbility(i: number) {
 .cartao-pokemon {
   position: relative;
   margin: 5px;
-  width: 150px;
-  height: 115px;
+  width: 185px;
+  height: 160px;
   cursor: pointer;
   border-radius: 5px;
-  -webkit-box-shadow: 2px 2px 2px rgba(200, 200, 200, 0.77);
-  -moz-box-shadow: 2px 2px 2px rgba(200, 200, 200, 0.77);
   box-shadow: 2px 2px 2px rgba(200, 200, 200, 0.77);
 }
 
@@ -289,7 +335,6 @@ function removeAbility(i: number) {
 
 .cartao-pokemon span {
   color: #fff;
-  position: absolute;
   background: rgba(255, 255, 255, 0.3);
   font-size: 12px;
   margin: 10px 0px 0px 5px;
@@ -297,10 +342,15 @@ function removeAbility(i: number) {
   border-radius: 25px;
 }
 
-.cartao-pokemon img {
-  max-width: 60%;
-  max-height: 60%;
-  float: right;
+.cartao-pokemon-img {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cartao-pokemon-img img {
+  height: 120px;
+  width: 120px;
+  padding-bottom: 10px;
 }
 
 .bg-grama {
@@ -317,6 +367,58 @@ function removeAbility(i: number) {
 
 .bg-inseto {
   background-color: #26d3ab;
+}
+
+.bg-normal {
+  background-color: #cecece;
+}
+/*  */
+
+.bg-grass {
+  background-color: #2d8f78;
+}
+
+.bg-fire {
+  background-color: #e47373;
+}
+
+.bg-water {
+  background-color: #5a9ed2;
+}
+
+.bg-bug {
+  background-color: #a2b81f;
+}
+
+.bg-electric {
+  background-color: #d3b530;
+}
+
+.bg-ghost,
+.bg-poison {
+  background-color: #ba6cb2;
+}
+
+.bg-ice {
+  background-color: #58beec;
+}
+
+.bg-rock,
+.bg-ground {
+  background-color: #c8a98e;
+}
+
+.bg-dragon,
+.bg-fighting {
+  background-color: #d8c225;
+}
+
+.bg-psychic {
+  background-color: #d131c1;
+}
+
+.bg-fairy {
+  background-color: #de5083;
 }
 
 .bg-normal {

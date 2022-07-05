@@ -83,30 +83,4 @@ function analyzePokemon(p: P): void {
   padding: 5px 10px 5px 10px;
   border-radius: 25px;
 }
-
-.cartao-pokemon img {
-  max-width: 60%;
-  max-height: 60%;
-  float: right;
-}
-
-.bg-grama {
-  background-color: #2d8f78;
-}
-
-.bg-fogo {
-  background-color: #e47373;
-}
-
-.bg-agua {
-  background-color: #5a9ed2;
-}
-
-.bg-inseto {
-  background-color: #26d3ab;
-}
-
-.bg-normal {
-  background-color: #cecece;
-}
 </style>
