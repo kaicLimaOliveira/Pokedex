@@ -31,6 +31,8 @@ const state: IPokemon = reactive({
 });
 
 function analyzePokemon(p: P): void {
+  console.log(state.pokemon);
+
   let changePokemonAnalysis = false;
 
   if (state.pokemon.id != p.id && state.display) {

@@ -4,7 +4,9 @@
     <div v-else>
       <p>Identificador: {{ props.pokemon.id }}</p>
       <p>Nome: {{ props.pokemon.name }}</p>
-      <p>Tipo: {{ props.pokemon.type }}</p>
+      <p v-for="type in props.pokemon.types" :key="type">
+        Tipo: {{ type.type.name }}
+      </p>
     </div>
   </div>
 </template>

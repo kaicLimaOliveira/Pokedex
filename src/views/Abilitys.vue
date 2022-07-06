@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div v-if="!props.pokemon.abilitys">Selecione um Pokémon</div>
+    <div v-if="!props.pokemon.abilities">Selecione um Pokémon</div>
     <div v-else>
       <table class="table text-white">
         <tbody>
           <TransitionGroup name="list">
             <tr v-for="(a, i) in abilityOrdered" :key="a">
-              <td>{{ a }}</td>
+              <td>{{ a.ability.name }}</td>
+
               <td class="d-flex justify-content-end">
                 <button
                   type="button"
@@ -37,7 +38,7 @@ import { reactive, defineProps, defineEmits, computed } from "vue";
 const state = reactive({ ability: "" });
 const emit = defineEmits(["addAbility", "removeAbility"]);
 const props = defineProps<{
-  pokemon: { abilitys: Array<string> };
+  pokemon: { abilities: Array<string> };
 }>();
 
 function addAbility() {
@@ -45,8 +46,8 @@ function addAbility() {
   state.ability = "";
 }
 
-const abilityOrdered = computed(() => {
-  let abilitys = props.pokemon.abilitys;
+const abilityOrdered = computed((): Array<string> => {
+  const abilitys = props.pokemon.abilities;
   return abilitys.sort();
 });
 </script>

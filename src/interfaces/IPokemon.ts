@@ -8,12 +8,11 @@ interface IPokemon {
     displayEvolution: boolean;
     pokemon: {
         id?: number;
-        abilitys?: Array<Object>;
+        abilities?: Array<Object>;
     }
     pokemons: Emp[];
     ordered?: number;
     namePokemon?: string;
-    pokemonsPromises?: Array<Promise<any>>
 }
 
 interface P {

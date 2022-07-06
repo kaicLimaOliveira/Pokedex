@@ -16,7 +16,9 @@
               >
                 <img
                   :src="
-                    require(`@/assets/imgs/pokemons/${state.pokemon.image}`)
+                    require(`@/assets/imgs/pokemons/${state.pokemon.id
+                      .toString()
+                      .padStart(3, '0')}.png`)
                   "
                   v-if="state.display"
                 />
@@ -111,43 +113,17 @@
               type="text"
               class="form-control"
               placeholder="Pesquisar Pokémon"
-              v-model="state.namePokemon"
+              @keyup.enter="searchPokemon"
             />
           </div>
         </div>
-
-        <!-- <div class="row">
-          <div class="pokedex-catalogo"> -->
-        <!-- início listagem dinâmica -->
-        <!-- <TransitionGroup name="ordered">
-              <div
-                v-for="p in state.pokemons"
-                :key="p.id"
-                :class="`cartao-pokemon bg-${p.type}`"
-                @click="analyzePokemon(p)"
-              >
-                <h1>{{ p.id }} {{ p.name }}</h1>
-                <span>{{ p.type }}</span>
-                <div class="cartao-pokemon-img">
-                  <Transition
-                    appear
-                    enter-active-class="animate__animated animate__fadeInDown"
-                  >
-                    <img :src="require(`@/assets/imgs/pokemons/${p.image}`)" />
-                  </Transition>
-                </div>
-              </div>
-            </TransitionGroup> -->
-        <!-- fim listagem dinâmica -->
-        <!-- </div>
-        </div> -->
 
         <div class="row mt-5">
           <div class="pokedex-catalogo">
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
               <div
-                v-for="pokemon in state.pokemonsPromises"
+                v-for="pokemon in state.pokemons"
                 :key="pokemon.id"
                 :class="`cartao-pokemon bg-${pokemon.types[0].type.name}`"
                 @click="analyzePokemon(pokemon)"
@@ -163,7 +139,11 @@
                     enter-active-class="animate__animated animate__fadeInDown"
                   >
                     <img
-                      :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`"
+                      :src="
+                        require(`@/assets/imgs/pokemons/${pokemon.id
+                          .toString()
+                          .padStart(3, '0')}.png`)
+                      "
                     />
                   </Transition>
                 </div>
@@ -189,7 +169,6 @@ const state: IPokemon = reactive({
   pokemons: [],
   ordered: 0,
   namePokemon: "",
-  pokemonsPromises: [],
 });
 
 watch(
@@ -233,65 +212,74 @@ watch(
   }
 );
 
-// function getPokemons() {
-//   fetch("http://localhost:3000/pokemons")
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((data) => {
-//       state.pokemons = data;
-//     });
-// }
-
-// getPokemons();
-
 const fetchPokemon = async () => {
-  const getPokemonUrl = (id: number) =>
-    `https://pokeapi.co/api/v2/pokemon/${id}`;
+  try {
+    const promises = [];
+    const getPokemonUrl = (id: number) =>
+      `https://pokeapi.co/api/v2/pokemon/${id}`;
 
-  const promises = [];
+    for (let index = 1; index <= 150; index++) {
+      const response = await fetch(getPokemonUrl(index));
+      promises.push(response.json());
+    }
 
-  for (let index = 1; index <= 150; index++) {
-    const response = await fetch(getPokemonUrl(index));
-    promises.push(response.json());
+    state.pokemons = await Promise.all(promises);
+  } catch (e) {
+    console.log(e);
   }
-
-  state.pokemonsPromises = await Promise.all(promises);
 };
 
-fetchPokemon();
-
 function analyzePokemon(pokemon: P): void {
-  let changePokemonAnalysis = false;
+  try {
+    let changePokemonAnalysis = false;
 
-  if (pokemon.id && state.display) {
-    setTimeout(() => {
-      analyzePokemon(pokemon);
-    }, 1000);
+    if (state.pokemon.id != pokemon.id && state.display) {
+      setTimeout(() => {
+        analyzePokemon(pokemon);
+      }, 1000);
 
-    changePokemonAnalysis = true;
-  }
+      changePokemonAnalysis = true;
+    }
 
-  state.pokemon = pokemon;
-  state.display = !state.display;
-  state.displayEvolution = !state.displayEvolution;
+    state.pokemon = pokemon;
+    state.display = !state.display;
+    state.displayEvolution = !state.displayEvolution;
 
-  if (!state.display && !changePokemonAnalysis) {
-    state.pokemon = {};
+    if (!state.display && !changePokemonAnalysis) {
+      state.pokemon = {};
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
 
 function addAbility(ability: string) {
-  if (state.pokemon.abilitys) {
-    state.pokemon.abilitys.push(ability);
+  try {
+    const newAbility = {
+      ability: {
+        name: ability,
+      },
+    };
+
+    if (state.pokemon.abilities) {
+      state.pokemon.abilities.push(newAbility);
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
 
 function removeAbility(i: number) {
-  if (state?.pokemon?.abilitys?.[i]) {
-    state.pokemon.abilitys.splice(i, 1);
+  try {
+    if (state?.pokemon?.abilities?.[i]) {
+      state.pokemon.abilities.splice(i, 1);
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
+
+fetchPokemon();
 </script>
 
 <style scoped>
@@ -318,9 +306,9 @@ function removeAbility(i: number) {
 
 .cartao-pokemon {
   position: relative;
-  margin: 5px;
-  width: 185px;
-  height: 160px;
+  margin: 4.5px;
+  width: 160px;
+  height: 150px;
   cursor: pointer;
   border-radius: 5px;
   box-shadow: 2px 2px 2px rgba(200, 200, 200, 0.77);
@@ -352,27 +340,6 @@ function removeAbility(i: number) {
   width: 120px;
   padding-bottom: 10px;
 }
-
-.bg-grama {
-  background-color: #2d8f78;
-}
-
-.bg-fogo {
-  background-color: #e47373;
-}
-
-.bg-agua {
-  background-color: #5a9ed2;
-}
-
-.bg-inseto {
-  background-color: #26d3ab;
-}
-
-.bg-normal {
-  background-color: #cecece;
-}
-/*  */
 
 .bg-grass {
   background-color: #2d8f78;

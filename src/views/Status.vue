@@ -1,60 +1,18 @@
 <template>
   <div>
-    <div v-if="!pokemon.status">Selecione um Pokémon</div>
-    <div v-else>
-      <span>Força:</span>
+    <div v-if="!props.pokemon.stats">Selecione um Pokémon</div>
+    <div v-else v-for="(stats, key) in props.pokemon.stats" :key="key">
+      <span>{{ stats.stat.name.toUpperCase() }}:</span>
       <div class="progress mb-2">
         <div
           class="progress-bar"
           role="progressbar"
-          :style="`width: ${pokemon.status.force}%;`"
-          :aria-valuenow="pokemon.status.force"
+          :style="`width: ${stats.base_stat}%;`"
+          :aria-valuenow="stats.base_stat"
           aria-valuemin="0"
           aria-valuemax="100"
         >
-          {{ pokemon.status.force }}
-        </div>
-      </div>
-
-      <span>Agilidade:</span>
-      <div class="progress mb-2">
-        <div
-          class="progress-bar"
-          role="progressbar"
-          :style="`width: ${pokemon.status.agility}%;`"
-          :aria-valuenow="pokemon.status.agility"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          {{ pokemon.status.agility }}
-        </div>
-      </div>
-
-      <span>Ataque</span>
-      <div class="progress mb-2">
-        <div
-          class="progress-bar"
-          role="progressbar"
-          :style="`width: ${pokemon.status.attack}%;`"
-          :aria-valuenow="pokemon.status.attack"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          {{ pokemon.status.attack }}
-        </div>
-      </div>
-
-      <span>Defesa</span>
-      <div class="progress mb-2">
-        <div
-          class="progress-bar"
-          role="progressbar"
-          :style="`width: ${pokemon.status.defense}%;`"
-          :aria-valuenow="pokemon.status.defense"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          {{ pokemon.status.defense }}
+          {{ stats.base_stat }}
         </div>
       </div>
     </div>
