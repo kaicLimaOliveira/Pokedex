@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
-    <div class="row mt-2">
+  <div class="container-fluid">
+    <div class="row m-3 content-pokedex">
       <!-- início lado esquerdo -->
       <div class="col mb-2">
         <div class="card palco">
           <div class="card-header"></div>
 
           <div class="card-body bg-pokebola bg-normal">
-            <div class="pokemon">
+            <div class="pokemon d-block text-center">
               <Transition
                 @after-enter="state.displayEvolution = true"
                 @before-leave="state.displayEvolution = false"
@@ -24,7 +24,7 @@
                 />
               </Transition>
 
-              <div class="evolucoes">
+              <div class="evolucoes position-absolute">
                 <Transition
                   name="fade"
                   v-for="e in state.pokemon.evolution"
@@ -37,6 +37,7 @@
                         .padStart(3, '0')}.png`)
                     "
                     v-if="state.displayEvolution"
+                    role="button"
                   />
                 </Transition>
               </div>
@@ -69,7 +70,7 @@
               </RouterLink>
             </nav>
 
-            <div class="detalhes">
+            <div class="my-4 mx-4">
               <!-- exibe dados de acordo com o menu de navegação -->
               <RouterView
                 v-slot="{ Component }"
@@ -90,7 +91,7 @@
       <!-- fim lado esquerdo -->
 
       <!-- início lado direito -->
-      <div class="col mb-2 pokedex">
+      <div class="col mb-2 pokedex p-3">
         <div class="row">
           <div class="col">
             <h1>Pokédex</h1>
@@ -113,32 +114,40 @@
               type="text"
               class="form-control"
               placeholder="Pesquisar Pokémon"
-              @keyup.enter="searchPokemon"
+              v-model="state.namePokemon"
             />
           </div>
         </div>
 
         <div class="row mt-5">
-          <div class="pokedex-catalogo">
+          <div class="pokedex-catalogo d-flex flex-wrap justify-content-center">
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
               <div
-                v-for="pokemon in state.pokemons"
+                v-for="pokemon in filterRobots"
                 :key="pokemon.id"
-                :class="`cartao-pokemon bg-${pokemon.types[0].type.name}`"
+                :class="`card-pokemon position-relative m-1 bg-${pokemon.types[0].type.name}`"
+                role="button"
                 @click="analyzePokemon(pokemon)"
               >
-                <h1>{{ pokemon.id }} {{ pokemon.name }}</h1>
-                <span class="" v-for="info in pokemon.types" :key="info.slot">
+                <h1 class="p-0 mt-1 ms-1">
+                  {{ pokemon.id }} {{ pokemon.name }}
+                </h1>
+                <span
+                  class="py-1 px-2 mt-2 ms-1"
+                  v-for="info in pokemon.types"
+                  :key="info.slot"
+                >
                   {{ info.type.name }}
                 </span>
 
-                <div class="cartao-pokemon-img">
+                <div class="card-pokemon-img d-flex justify-content-end">
                   <Transition
                     appear
                     enter-active-class="animate__animated animate__fadeInDown"
                   >
                     <img
+                      class="pb-2"
                       :src="
                         require(`@/assets/imgs/pokemons/${pokemon.id
                           .toString()
@@ -159,8 +168,28 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
-import { IPokemon, P } from "../interfaces/IPokemon";
+import { reactive, watch, computed } from "vue";
+
+interface P {
+  id: number;
+}
+
+interface Pokemon {
+  id: number;
+  name: string;
+}
+
+interface IPokemon {
+  display: boolean;
+  displayEvolution: boolean;
+  pokemon: {
+    id?: number;
+    abilities?: Array<object>;
+  };
+  pokemons: Array<Pokemon>;
+  ordered: number;
+  namePokemon: string;
+}
 
 const state: IPokemon = reactive({
   display: false,
@@ -218,12 +247,13 @@ const fetchPokemon = async () => {
     const getPokemonUrl = (id: number) =>
       `https://pokeapi.co/api/v2/pokemon/${id}`;
 
-    for (let index = 1; index <= 150; index++) {
+    for (let index = 1; index <= 250; index++) {
       const response = await fetch(getPokemonUrl(index));
       promises.push(response.json());
     }
 
     state.pokemons = await Promise.all(promises);
+    console.log(state.pokemons);
   } catch (e) {
     console.log(e);
   }
@@ -279,6 +309,18 @@ function removeAbility(i: number) {
   }
 }
 
+const filterRobots = computed(() => {
+  try {
+    return state.pokemons.filter((res) => {
+      return (
+        res.name.toLowerCase().indexOf(state.namePokemon?.toLowerCase()) > -1
+      );
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 fetchPokemon();
 </script>
 
@@ -287,7 +329,6 @@ fetchPokemon();
 @import "../../node_modules/animate.css";
 
 .pokedex {
-  padding: 20px;
   background-color: #ffffff;
   -webkit-box-shadow: 2px 2px 10px rgba(200, 200, 200, 0.77);
   -moz-box-shadow: 2px 2px 10px rgba(200, 200, 200, 0.77);
@@ -297,48 +338,32 @@ fetchPokemon();
 
 .pokedex-catalogo {
   overflow: auto;
-  display: flex;
-  flex-wrap: wrap;
   height: 400px;
   width: 98%;
-  margin-top: 10px;
 }
 
-.cartao-pokemon {
-  position: relative;
-  margin: 4.5px;
-  width: 160px;
-  height: 150px;
-  cursor: pointer;
+.card-pokemon {
+  width: 180px;
+  height: 165px;
   border-radius: 5px;
   box-shadow: 2px 2px 2px rgba(200, 200, 200, 0.77);
 }
 
-.cartao-pokemon h1 {
+.card-pokemon h1 {
   color: #fff;
   font-size: 14px;
-  margin: 5px 0px 0px 5px;
-  padding: 0px;
 }
 
-.cartao-pokemon span {
+.card-pokemon span {
   color: #fff;
   background: rgba(255, 255, 255, 0.3);
   font-size: 12px;
-  margin: 10px 0px 0px 5px;
-  padding: 5px 10px 5px 10px;
   border-radius: 25px;
 }
 
-.cartao-pokemon-img {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.cartao-pokemon-img img {
+.card-pokemon-img img {
   height: 120px;
-  width: 120px;
-  padding-bottom: 10px;
+  width: 135px;
 }
 
 .bg-grass {
@@ -408,25 +433,49 @@ fetchPokemon();
 }
 
 .pokemon {
-  display: block;
-  text-align: center;
   height: 215px;
 }
 
-.detalhes {
-  margin: 20px 30px 20px 30px;
+.pokemon img {
+  height: 215px;
 }
 
 .evolucoes {
-  position: absolute;
   top: 0px;
   right: 0px;
   height: 70px;
 }
 
 .evolucoes img {
-  cursor: pointer;
   max-width: 100%;
   max-height: 100%;
+}
+
+@media (max-width: 700px) {
+  .content-pokedex {
+    display: block;
+  }
+
+  .card-pokemon-img img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .card-pokemon {
+    width: 130px;
+    height: 135px;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-pokemon-img img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .card-pokemon {
+    width: 115px;
+    height: 115px;
+  }
 }
 </style>
