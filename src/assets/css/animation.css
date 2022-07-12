@@ -231,31 +231,6 @@
     }
 }
 
-/* slide de cima para baixo (utilizand nomes de classes customizados) */
-.abacaxi {
-    opacity: 0;
-    transform: translateY(-150px)
-}
-
-.entrada-estado-final {
-    opacity: 1;
-    transform: translateY(0px)
-}
-
-.saida-estado-inicial {
-    opacity: 1;
-    transform: translateY(0px)
-}
-
-.xyz {
-    opacity: 0;
-    transform: translateY(50px)
-}
-
-.transicao {
-    transition: all 2s;
-}
-
 /* transition-group */
 .ordered-move {
     transition: all 2s;

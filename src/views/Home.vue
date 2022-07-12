@@ -124,7 +124,7 @@
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
               <div
-                v-for="pokemon in filterRobots"
+                v-for="pokemon in filterPokemons"
                 :key="pokemon.id"
                 :class="`card-pokemon position-relative m-1 bg-${pokemon.types[0].type.name}`"
                 role="button"
@@ -161,6 +161,10 @@
             <!-- fim listagem dinâmica -->
           </div>
         </div>
+
+        <div class="row mx-5 my-3" @click="handleClickPlusPokemons">
+          <button class="btn btn-dark">MAIS POKEMONS</button>
+        </div>
       </div>
       <!-- fim lado direito -->
     </div>
@@ -189,6 +193,8 @@ interface IPokemon {
   pokemons: Array<Pokemon>;
   ordered: number;
   namePokemon: string;
+  indexInitial: number;
+  indexFinal: number;
 }
 
 const state: IPokemon = reactive({
@@ -198,9 +204,11 @@ const state: IPokemon = reactive({
   pokemons: [],
   ordered: 0,
   namePokemon: "",
+  indexInitial: 1,
+  indexFinal: 100,
 });
 
-watch(
+const orderBy = watch(
   () => state.ordered,
   (newValue) => {
     if (newValue == 1) {
@@ -247,17 +255,30 @@ const fetchPokemon = async () => {
     const getPokemonUrl = (id: number) =>
       `https://pokeapi.co/api/v2/pokemon/${id}`;
 
-    for (let index = 1; index <= 250; index++) {
-      const response = await fetch(getPokemonUrl(index));
+    for (
+      state.indexInitial;
+      state.indexInitial <= state.indexFinal;
+      state.indexInitial++
+    ) {
+      if (state.indexInitial >= 836) break;
+
+      const response = await fetch(getPokemonUrl(state.indexInitial));
       promises.push(response.json());
     }
 
-    state.pokemons = await Promise.all(promises);
-    console.log(state.pokemons);
+    const pokemons = await Promise.all(promises);
+    state.pokemons = [...state.pokemons, ...pokemons];
   } catch (e) {
     console.log(e);
   }
 };
+
+function handleClickPlusPokemons() {
+  state.indexInitial = state.indexFinal + 1;
+  state.indexFinal = state.indexFinal + 100;
+
+  fetchPokemon();
+}
 
 function analyzePokemon(pokemon: P): void {
   try {
@@ -309,11 +330,12 @@ function removeAbility(i: number) {
   }
 }
 
-const filterRobots = computed(() => {
+const filterPokemons = computed(() => {
   try {
     return state.pokemons.filter((res) => {
       return (
-        res.name.toLowerCase().indexOf(state.namePokemon?.toLowerCase()) > -1
+        res.name.toLowerCase().indexOf(state.namePokemon?.toLowerCase()) > -1 ||
+        res.id == parseInt(state.namePokemon)
       );
     });
   } catch (e) {
@@ -386,6 +408,10 @@ fetchPokemon();
   background-color: #d3b530;
 }
 
+.bg-steel {
+  background-color: #b7c0c4;
+}
+
 .bg-ghost,
 .bg-poison {
   background-color: #ba6cb2;
@@ -401,7 +427,8 @@ fetchPokemon();
 }
 
 .bg-dragon,
-.bg-fighting {
+.bg-fighting,
+.bg-flying {
   background-color: #d8c225;
 }
 
@@ -474,8 +501,20 @@ fetchPokemon();
   }
 
   .card-pokemon {
-    width: 115px;
-    height: 115px;
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 450px) {
+  .card-pokemon-img img {
+    width: 85px;
+    height: 85px;
+  }
+
+  .card-pokemon {
+    width: 130px;
+    height: 130px;
   }
 }
 </style>
