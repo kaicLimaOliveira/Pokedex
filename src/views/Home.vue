@@ -120,7 +120,11 @@
         </div>
 
         <div class="row mt-5">
-          <div class="pokedex-catalogo d-flex flex-wrap justify-content-center">
+          <div
+            ref="main"
+            class="pokedex-catalogo d-flex flex-wrap justify-content-center"
+            @scroll="handleClickPlusPokemons"
+          >
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
               <div
@@ -161,10 +165,6 @@
             <!-- fim listagem dinâmica -->
           </div>
         </div>
-
-        <div class="row mx-5 my-3" @click="handleClickPlusPokemons">
-          <button class="btn btn-dark">MAIS POKEMONS</button>
-        </div>
       </div>
       <!-- fim lado direito -->
     </div>
@@ -172,7 +172,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed } from "vue";
+import { reactive, watch, computed, ref, Ref } from "vue";
 
 interface P {
   id: number;
@@ -189,6 +189,7 @@ interface IPokemon {
   pokemon: {
     id?: number;
     abilities?: Array<object>;
+    evolution?: number;
   };
   pokemons: Array<Pokemon>;
   ordered: number;
@@ -205,7 +206,7 @@ const state: IPokemon = reactive({
   ordered: 0,
   namePokemon: "",
   indexInitial: 1,
-  indexFinal: 100,
+  indexFinal: 20,
 });
 
 const orderBy = watch(
@@ -249,6 +250,22 @@ const orderBy = watch(
   }
 );
 
+let throttleTimer: boolean;
+const throttle = (callback: () => void, time: number) => {
+  if (throttleTimer) return
+  throttleTimer = true
+
+  setTimeout(() => {
+    callback();
+    throttleTimer = false
+
+    state.indexInitial = state.indexInitial + 0;
+    state.indexFinal = state.indexFinal + 20;
+    
+  }, time);
+}
+
+const main: Ref<any> = ref(null);
 const fetchPokemon = async () => {
   try {
     const promises = [];
@@ -274,14 +291,19 @@ const fetchPokemon = async () => {
 };
 
 function handleClickPlusPokemons() {
-  state.indexInitial = state.indexFinal + 1;
-  state.indexFinal = state.indexFinal + 100;
+  const position = main.value.scrollTop;
+  const top = main.value.scrollHeight;
+  const newValue = top - position;
 
-  fetchPokemon();
+  if (position > newValue) {
+    throttle(fetchPokemon, 800)
+  }
 }
 
 function analyzePokemon(pokemon: P): void {
   try {
+    console.log(state.pokemons);
+    
     let changePokemonAnalysis = false;
 
     if (state.pokemon.id != pokemon.id && state.display) {
