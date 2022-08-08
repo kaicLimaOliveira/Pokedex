@@ -4,22 +4,29 @@
     <div v-else v-for="(stats, key) in props.pokemon.stats" :key="key">
       <span>{{ stats.stat.name.toUpperCase() }}:</span>
       <div class="progress mb-2">
-        <div
-          class="progress-bar"
-          role="progressbar"
-          :style="`width: ${stats.base_stat}%;`"
-          :aria-valuenow="stats.base_stat"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
+        <div class="progress-bar" role="progressbar" :style="`width: ${stats.base_stat}%;`"
+          :aria-valuenow="stats.base_stat" aria-valuemin="0" aria-valuemax="100">
           {{ stats.base_stat }}
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineProps } from "vue";
-const props = defineProps({ pokemon: Object });
+
+interface PokemonProps {
+  pokemon: {
+    stats: Array<{
+      stat: {
+        name: string;
+      }
+      base_stat: number;
+    }>
+  }
+}
+
+const props: PokemonProps = defineProps({ pokemon: Object });
 </script>

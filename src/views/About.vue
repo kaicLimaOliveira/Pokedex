@@ -4,7 +4,7 @@
     <div v-else>
       <p>Identificador: {{ props.pokemon.id }}</p>
       <p>Nome: {{ props.pokemon.name }}</p>
-      <p v-for="type in props.pokemon.types" :key="type">
+      <p v-for="type, idx in props.pokemon.types" :key="idx">
         Tipo: {{ type.type.name }}
       </p>
     </div>
@@ -13,5 +13,18 @@
 
 <script lang="ts" setup>
 import { defineProps } from "vue";
-const props = defineProps({ pokemon: Object });
+
+interface Props {
+  pokemon: {
+    id: string;
+    name: string;
+    types: Array<{
+      type: {
+        name: string;
+      }
+    }>;
+  }
+}
+
+const props: Props = defineProps({ pokemon: Object });
 </script>

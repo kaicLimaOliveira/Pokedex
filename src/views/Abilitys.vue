@@ -9,11 +9,7 @@
               <td>{{ a.ability.name }}</td>
 
               <td class="d-flex justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  @click="$emit('removeAbility', i)"
-                >
+                <button type="button" class="btn btn-danger btn-sm" @click="$emit('removeAbility', i)">
                   x
                 </button>
               </td>
@@ -21,13 +17,8 @@
           </TransitionGroup>
         </tbody>
       </table>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Adicionar habilidade"
-        v-model="state.ability"
-        @keyup.enter="addAbility"
-      />
+      <input type="text" class="form-control" placeholder="Adicionar habilidade" v-model="state.ability"
+        @keyup.enter="addAbility" />
     </div>
   </div>
 </template>

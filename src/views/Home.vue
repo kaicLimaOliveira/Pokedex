@@ -8,37 +8,23 @@
 
           <div class="card-body bg-pokebola bg-normal">
             <div class="pokemon d-block text-center">
-              <Transition
-                @after-enter="state.displayEvolution = true"
-                @before-leave="state.displayEvolution = false"
+              <Transition @after-enter="state.displayEvolution = true" @before-leave="state.displayEvolution = false"
                 enter-active-class="animate__animated animate__bounceIn"
-                leave-active-class="animate__animated animate__bounceOut"
-              >
-                <img
-                  :src="
-                    require(`@/assets/imgs/pokemons/${state.pokemon.id
-                      .toString()
-                      .padStart(3, '0')}.png`)
-                  "
-                  v-if="state.display"
-                />
+                leave-active-class="animate__animated animate__bounceOut">
+                <img :src="
+                  require(`@/assets/imgs/pokemons/${state?.pokemon?.id
+                    .toString()
+                    .padStart(3, '0')}.png`)
+                " v-if="state.display" />
               </Transition>
 
               <div class="evolucoes position-absolute">
-                <Transition
-                  name="fade"
-                  v-for="e in state.pokemon.evolution"
-                  :key="e"
-                >
-                  <img
-                    :src="
-                      require(`@/assets/imgs/pokemons/${e
-                        .toString()
-                        .padStart(3, '0')}.png`)
-                    "
-                    v-if="state.displayEvolution"
-                    role="button"
-                  />
+                <Transition name="fade" v-for="e in state.pokemon.evolution" :key="e">
+                  <img :src="
+                    require(`@/assets/imgs/pokemons/${e
+                      .toString()
+                      .padStart(3, '0')}.png`)
+                  " v-if="state.displayEvolution" role="button" />
                 </Transition>
               </div>
             </div>
@@ -47,40 +33,23 @@
           <div class="card-footer">
             <nav class="nav nav-pills nav-fill">
               <!-- menu de navegação -->
-              <RouterLink
-                class="nav-item nav-link text-white"
-                :to="{ path: '/sobre' }"
-                exact-active-class="active"
-              >
+              <RouterLink class="nav-item nav-link text-white" :to="{ path: '/sobre' }" exact-active-class="active">
                 Sobre
               </RouterLink>
-              <RouterLink
-                class="nav-item nav-link text-white"
-                :to="{ path: '/status' }"
-                exact-active-class="active"
-              >
+              <RouterLink class="nav-item nav-link text-white" :to="{ path: '/status' }" exact-active-class="active">
                 Status
               </RouterLink>
-              <RouterLink
-                class="nav-item nav-link text-white"
-                :to="{ path: '/habilidades' }"
-                exact-active-class="active"
-              >
+              <RouterLink class="nav-item nav-link text-white" :to="{ path: '/habilidades' }"
+                exact-active-class="active">
                 Habilidades
               </RouterLink>
             </nav>
 
             <div class="my-4 mx-4">
               <!-- exibe dados de acordo com o menu de navegação -->
-              <RouterView
-                v-slot="{ Component }"
-                :pokemon="state.pokemon"
-                @addAbility="addAbility"
-                @removeAbility="removeAbility"
-              >
-                <Transition
-                  enter-active-class="animate__animated animate__zoomInDown"
-                >
+              <RouterView v-slot="{ Component }" :pokemon="state.pokemon" @addAbility="addAbility"
+                @removeAbility="removeAbility">
+                <Transition enter-active-class="animate__animated animate__zoomInDown">
                   <component :is="Component" />
                 </Transition>
               </RouterView>
@@ -110,54 +79,32 @@
           </div>
 
           <div class="col">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Pesquisar Pokémon"
-              v-model="state.namePokemon"
-            />
+            <input type="text" class="form-control" placeholder="Pesquisar Pokémon" v-model="state.namePokemon" />
           </div>
         </div>
 
         <div class="row mt-5">
-          <div
-            ref="main"
-            class="pokedex-catalogo d-flex flex-wrap justify-content-center"
-            @scroll="handleClickPlusPokemons"
-          >
+          <div ref="main" class="pokedex-catalogo d-flex flex-wrap justify-content-center"
+            @scroll="handleClickPlusPokemons">
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
-              <div
-                v-for="pokemon in filterPokemons"
-                :key="pokemon.id"
-                :class="`card-pokemon position-relative m-1 bg-${pokemon.types[0].type.name}`"
-                role="button"
-                @click="analyzePokemon(pokemon)"
-              >
+              <div v-for="pokemon in filterPokemons" :key="pokemon.id"
+                :class="`card-pokemon position-relative m-1 bg-${pokemon.types[0].type.name}`" role="button"
+                @click="analyzePokemon(pokemon)">
                 <h1 class="p-0 mt-1 ms-1">
                   {{ pokemon.id }} {{ pokemon.name }}
                 </h1>
-                <span
-                  class="py-1 px-2 mt-2 ms-1"
-                  v-for="info in pokemon.types"
-                  :key="info.slot"
-                >
+                <span class="py-1 px-2 mt-2 ms-1" v-for="info in pokemon.types" :key="info.slot">
                   {{ info.type.name }}
                 </span>
 
                 <div class="card-pokemon-img d-flex justify-content-end">
-                  <Transition
-                    appear
-                    enter-active-class="animate__animated animate__fadeInDown"
-                  >
-                    <img
-                      class="pb-2"
-                      :src="
-                        require(`@/assets/imgs/pokemons/${pokemon.id
-                          .toString()
-                          .padStart(3, '0')}.png`)
-                      "
-                    />
+                  <Transition appear enter-active-class="animate__animated animate__fadeInDown">
+                    <img class="pb-2" :src="
+                      require(`@/assets/imgs/pokemons/${pokemon.id
+                        .toString()
+                        .padStart(3, '0')}.png`)
+                    " />
                   </Transition>
                 </div>
               </div>
@@ -172,7 +119,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, ref, Ref } from "vue";
+import { reactive, watch, computed, ref, Ref, onMounted } from "vue";
 
 interface P {
   id: number;
@@ -181,6 +128,12 @@ interface P {
 interface Pokemon {
   id: number;
   name: string;
+  types: Array<{
+    type: {
+      name: string;
+    };
+    slot: number;
+  }>;
 }
 
 interface IPokemon {
@@ -214,34 +167,37 @@ const orderBy = watch(
   (newValue) => {
     if (newValue == 1) {
       state.pokemons.sort((next, current): number => {
-        if (current.id < next.id) {
+        if (current.id < next.id)
           return 1;
-        } else if (current.id > next.id) {
+
+        else if (current.id > next.id)
           return -1;
-        }
 
         return 0;
       });
+
     } else if (newValue == 2) {
       state.pokemons.sort((next, current) => {
-        if (current.id < next.id) {
+        if (current.id < next.id)
           return -1;
-        } else if (current.id > next.id) {
+
+        else if (current.id > next.id)
           return 1;
-        }
 
         return 0;
       });
+
     } else if (newValue == 3) {
       state.pokemons.sort((next, current) => {
-        if (current.name < next.name) {
+        if (current.name < next.name)
           return 1;
-        } else if (current.name > next.name) {
+
+        else if (current.name > next.name)
           return -1;
-        }
 
         return 0;
       });
+
     } else if (newValue == 4) {
       state.pokemons.sort((next, current) => {
         return current.name.localeCompare(next.name);
@@ -256,12 +212,11 @@ const throttle = (callback: () => void, time: number) => {
   throttleTimer = true
 
   setTimeout(() => {
-    callback();
-    throttleTimer = false
-
     state.indexInitial = state.indexInitial + 0;
     state.indexFinal = state.indexFinal + 20;
-    
+
+    callback();
+    throttleTimer = false
   }, time);
 }
 
@@ -272,12 +227,8 @@ const fetchPokemon = async () => {
     const getPokemonUrl = (id: number) =>
       `https://pokeapi.co/api/v2/pokemon/${id}`;
 
-    for (
-      state.indexInitial;
-      state.indexInitial <= state.indexFinal;
-      state.indexInitial++
-    ) {
-      if (state.indexInitial >= 836) break;
+    for (state.indexInitial; state.indexInitial <= state.indexFinal; state.indexInitial++) {
+      if (state.indexInitial >= 905) break;
 
       const response = await fetch(getPokemonUrl(state.indexInitial));
       promises.push(response.json());
@@ -289,68 +240,6 @@ const fetchPokemon = async () => {
     console.log(e);
   }
 };
-
-function handleClickPlusPokemons() {
-  const position = main.value.scrollTop;
-  const top = main.value.scrollHeight;
-  const newValue = top - position;
-
-  if (position > newValue) {
-    throttle(fetchPokemon, 800)
-  }
-}
-
-function analyzePokemon(pokemon: P): void {
-  try {
-    console.log(state.pokemons);
-    
-    let changePokemonAnalysis = false;
-
-    if (state.pokemon.id != pokemon.id && state.display) {
-      setTimeout(() => {
-        analyzePokemon(pokemon);
-      }, 1000);
-
-      changePokemonAnalysis = true;
-    }
-
-    state.pokemon = pokemon;
-    state.display = !state.display;
-    state.displayEvolution = !state.displayEvolution;
-
-    if (!state.display && !changePokemonAnalysis) {
-      state.pokemon = {};
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-function addAbility(ability: string) {
-  try {
-    const newAbility = {
-      ability: {
-        name: ability,
-      },
-    };
-
-    if (state.pokemon.abilities) {
-      state.pokemon.abilities.push(newAbility);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-function removeAbility(i: number) {
-  try {
-    if (state?.pokemon?.abilities?.[i]) {
-      state.pokemon.abilities.splice(i, 1);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
 
 const filterPokemons = computed(() => {
   try {
@@ -365,7 +254,64 @@ const filterPokemons = computed(() => {
   }
 });
 
-fetchPokemon();
+function handleClickPlusPokemons() {
+  const position = main.value.scrollTop;
+  const top = main.value.scrollHeight;
+  const newValue = top - position;
+
+  if (position > newValue)
+    throttle(fetchPokemon, 1000)
+}
+
+function analyzePokemon(pokemon: P): void {
+  try {
+    let changePokemonAnalysis = false;
+
+    if (state.pokemon.id != pokemon.id && state.display) {
+      setTimeout(() => analyzePokemon(pokemon), 1000);
+
+      changePokemonAnalysis = true;
+    }
+
+    state.pokemon = pokemon;
+    state.display = !state.display;
+    state.displayEvolution = !state.displayEvolution;
+
+    if (!state.display && !changePokemonAnalysis)
+      state.pokemon = {};
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function addAbility(ability: string) {
+  try {
+    const newAbility = {
+      ability: {
+        name: ability,
+      },
+    };
+
+    if (state.pokemon.abilities)
+      state.pokemon.abilities.push(newAbility);
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function removeAbility(i: number) {
+  try {
+    if (state?.pokemon?.abilities?.[i])
+      state.pokemon.abilities.splice(i, 1);
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+onMounted(() => fetchPokemon())
 </script>
 
 <style scoped>
