@@ -11,6 +11,7 @@
 
 <p align="center">
   <img alt="Pokedex" src=".github/img1.jpeg" width="80%">
+  <img alt="Pokedex" src=".github/img2.jpeg" width="80%">
 </p>
 
 ## 💻 Projeto

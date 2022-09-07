@@ -15,9 +15,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps } from "vue"
 
-interface PokemonProps {
+interface Props {
   pokemon: {
     stats: Array<{
       stat: {
@@ -28,5 +28,5 @@ interface PokemonProps {
   }
 }
 
-const props: PokemonProps = defineProps({ pokemon: Object });
+const props = defineProps<Props>();
 </script>

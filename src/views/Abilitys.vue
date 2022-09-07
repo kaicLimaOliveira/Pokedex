@@ -5,8 +5,8 @@
       <table class="table text-white">
         <tbody>
           <TransitionGroup name="list">
-            <tr v-for="(a, i) in abilityOrdered" :key="a">
-              <td>{{ a.ability.name }}</td>
+            <tr v-for="(abilities, i) in abilityOrdered" :key="i">
+              <td>{{ abilities.ability.name }}</td>
 
               <td class="d-flex justify-content-end">
                 <button type="button" class="btn btn-danger btn-sm" @click="$emit('removeAbility', i)">
@@ -26,18 +26,29 @@
 <script lang="ts" setup>
 import { reactive, defineProps, defineEmits, computed } from "vue";
 
-const state = reactive({ ability: "" });
 const emit = defineEmits(["addAbility", "removeAbility"]);
-const props = defineProps<{
-  pokemon: { abilities: Array<string> };
-}>();
+const state = reactive({
+  ability: ""
+});
+
+interface Props {
+  pokemon: {
+    abilities: {
+      ability: {
+        name: string
+      }
+    }[]
+  }
+}
+
+const props = defineProps<Props>();
 
 function addAbility() {
   emit("addAbility", state.ability);
   state.ability = "";
 }
 
-const abilityOrdered = computed((): Array<string> => {
+const abilityOrdered = computed(() => {
   const abilitys = props.pokemon.abilities;
   return abilitys.sort();
 });

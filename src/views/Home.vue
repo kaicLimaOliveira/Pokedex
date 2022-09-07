@@ -12,7 +12,7 @@
                 enter-active-class="animate__animated animate__bounceIn"
                 leave-active-class="animate__animated animate__bounceOut">
                 <img :src="
-                  require(`@/assets/imgs/pokemons/${state?.pokemon?.id
+                  require(`@/assets/imgs/pokemons/${state.pokemon.id
                     .toString()
                     .padStart(3, '0')}.png`)
                 " v-if="state.display" />
@@ -120,38 +120,10 @@
 
 <script lang="ts" setup>
 import { reactive, watch, computed, ref, Ref, onMounted } from "vue";
+import { State, P } from "@/interfaces/Pokemon"
 
-interface P {
-  id: number;
-}
 
-interface Pokemon {
-  id: number;
-  name: string;
-  types: Array<{
-    type: {
-      name: string;
-    };
-    slot: number;
-  }>;
-}
-
-interface IPokemon {
-  display: boolean;
-  displayEvolution: boolean;
-  pokemon: {
-    id?: number;
-    abilities?: Array<object>;
-    evolution?: number;
-  };
-  pokemons: Array<Pokemon>;
-  ordered: number;
-  namePokemon: string;
-  indexInitial: number;
-  indexFinal: number;
-}
-
-const state: IPokemon = reactive({
+const state: State = reactive({
   display: false,
   displayEvolution: false,
   pokemon: {},

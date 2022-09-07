@@ -26,5 +26,5 @@ interface Props {
   }
 }
 
-const props: Props = defineProps({ pokemon: Object });
+const props = defineProps<Props>();
 </script>
