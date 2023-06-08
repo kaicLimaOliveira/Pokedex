@@ -1,6 +1,19 @@
 <template>
-  <div class="anim-3-circle anim-3"></div>
+  <div v-if="props.isLoading" class="anim-3-circle anim-3"></div>
 </template>
+
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+interface Props {
+  isLoading: boolean;
+}
+
+// eslint-disable-next-line no-undef
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+})
+</script>
 
 <style scoped>
 .anim-3-circle {

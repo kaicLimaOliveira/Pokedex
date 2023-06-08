@@ -11,22 +11,20 @@
               <Transition @after-enter="state.displayEvolution = true" @before-leave="state.displayEvolution = false"
                 enter-active-class="animate__animated animate__bounceIn"
                 leave-active-class="animate__animated animate__bounceOut">
-                <img :src="
-                  require(`@/assets/imgs/pokemons/${state.pokemon.id
-                    .toString()
-                    .padStart(3, '0')}.png`)
-                " v-if="state.display" />
+                <img :src="require(`@/assets/imgs/pokemons/${state.pokemon.id
+                  .toString()
+                  .padStart(3, '0')}.png`)
+                  " v-if="state.display" />
               </Transition>
 
-              <div class="evolucoes position-absolute">
+              <!-- <div class="evolucoes position-absolute">
                 <Transition name="fade" v-for="e in state.pokemon.evolution" :key="e">
-                  <img :src="
-                    require(`@/assets/imgs/pokemons/${e
-                      .toString()
-                      .padStart(3, '0')}.png`)
-                  " v-if="state.displayEvolution" role="button" />
+                  <img :src="require(`@/assets/imgs/pokemons/${e
+                    .toString()
+                    .padStart(3, '0')}.png`)
+                    " v-if="state.displayEvolution" role="button" />
                 </Transition>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -39,8 +37,7 @@
               <RouterLink class="nav-item nav-link text-white" :to="{ path: '/status' }" exact-active-class="active">
                 Status
               </RouterLink>
-              <RouterLink class="nav-item nav-link text-white" :to="{ path: '/habilidades' }"
-                exact-active-class="active">
+              <RouterLink class="nav-item nav-link text-white" :to="{ path: '/habilidades' }" exact-active-class="active">
                 Habilidades
               </RouterLink>
             </nav>
@@ -84,8 +81,7 @@
         </div>
 
         <div class="row mt-5">
-          <div ref="main" class="pokedex-catalogo d-flex flex-wrap justify-content-center"
-            @scroll="handleClickPlusPokemons">
+          <div ref="main" class="pokedex-catalogo d-flex flex-wrap justify-content-center" @scroll="loadOnScroll">
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
               <div v-for="pokemon in filterPokemons" :key="pokemon.id"
@@ -100,16 +96,15 @@
 
                 <div class="card-pokemon-img d-flex justify-content-end">
                   <Transition appear enter-active-class="animate__animated animate__fadeInDown">
-                    <img class="pb-2" :src="
-                      require(`@/assets/imgs/pokemons/${pokemon.id
-                        .toString()
-                        .padStart(3, '0')}.png`)
-                    " />
+                    <img class="pb-2"
+                      :src="require(`@/assets/imgs/pokemons/${pokemon.id.toString().padStart(3, '0')}.png`)" />
                   </Transition>
                 </div>
               </div>
             </TransitionGroup>
             <!-- fim listagem dinâmica -->
+
+            <Loader :is-loading="state.isLoading"></Loader>
           </div>
         </div>
       </div>
@@ -119,20 +114,45 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, ref, Ref, onMounted } from "vue";
-import { State, P } from "@/interfaces/Pokemon"
+import { reactive, watch, computed, ref, onMounted } from "vue";
+import { Pokemon } from "@/interfaces/Pokemon"
+import { throttle } from "@/composables/Throttle";
+import Loader from "@/components/Loader.vue"
+
+interface State {
+  display: boolean;
+  displayEvolution: boolean;
+  pokemon: {
+    id: number;
+    abilities?: object[];
+    evolution?: any[];
+  };
+  pokemons: Pokemon[];
+  ordered: number;
+  namePokemon: string;
+  indexInitial: number;
+  indexFinal: number;
+  canQuery: boolean;
+  isLoading: boolean;
+}
 
 
 const state: State = reactive({
   display: false,
   displayEvolution: false,
-  pokemon: {},
+  pokemon: {
+    id: 0,
+  },
   pokemons: [],
   ordered: 0,
   namePokemon: "",
   indexInitial: 1,
-  indexFinal: 20,
+  indexFinal: 15,
+  canQuery: true,
+  isLoading: false,
 });
+
+onMounted(() => fetchPokemon())
 
 const orderBy = watch(
   () => state.ordered,
@@ -178,112 +198,104 @@ const orderBy = watch(
   }
 );
 
-let throttleTimer: boolean;
-const throttle = (callback: () => void, time: number) => {
-  if (throttleTimer) return
-  throttleTimer = true
 
-  setTimeout(() => {
+const main = ref<HTMLElement | null>(null)
+const loadOnScroll = throttle(() => {
+
+  const scrollPos = main.value?.scrollTop ?? 0;
+  const bottom = (main.value?.scrollHeight ?? 0) - (main.value?.offsetHeight ?? 0);
+
+  if (scrollPos >= bottom * .7 && state.canQuery) {
+    state.canQuery = false
     state.indexInitial = state.indexInitial + 0;
-    state.indexFinal = state.indexFinal + 20;
-
-    callback();
-    throttleTimer = false
-  }, time);
-}
-
-const main: Ref<any> = ref(null);
-const fetchPokemon = async () => {
-  try {
-    const promises = [];
-    const getPokemonUrl = (id: number) =>
-      `https://pokeapi.co/api/v2/pokemon/${id}`;
-
-    for (state.indexInitial; state.indexInitial <= state.indexFinal; state.indexInitial++) {
-      if (state.indexInitial >= 905) break;
-
-      const response = await fetch(getPokemonUrl(state.indexInitial));
-      promises.push(response.json());
-    }
-
-    const pokemons = await Promise.all(promises);
-    state.pokemons = [...state.pokemons, ...pokemons];
-  } catch (e) {
-    console.log(e);
+    state.indexFinal = state.indexFinal + 3;
+    fetchPokemon()
   }
+
+}, 400)
+
+
+const fetchPokemon = async () => {
+  state.isLoading = true
+
+  const promises = [];
+  const getPokemonUrl = (pokemonId: number) => `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+
+  for (state.indexInitial; state.indexInitial <= state.indexFinal; state.indexInitial++) {
+    if (state.indexInitial >= 905) break;
+
+    const response = await fetch(getPokemonUrl(state.indexInitial));
+    promises.push(response.json());
+  }
+
+  const pokemons = await Promise.all(promises);
+  state.pokemons = [...state.pokemons, ...pokemons];
+
+  state.canQuery = true
+  state.isLoading = false
 };
 
+
 const filterPokemons = computed(() => {
-  try {
-    return state.pokemons.filter((res) => {
-      return (
-        res.name.toLowerCase().indexOf(state.namePokemon?.toLowerCase()) > -1 ||
-        res.id == parseInt(state.namePokemon)
-      );
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  return state.pokemons.filter((res) => {
+    return (
+      res.name.toLowerCase().indexOf(state.namePokemon?.toLowerCase()) > -1 ||
+      res.id == parseInt(state.namePokemon)
+    );
+  });
 });
 
-function handleClickPlusPokemons() {
-  const position = main.value.scrollTop;
-  const top = main.value.scrollHeight;
-  const newValue = top - position;
 
-  if (position > newValue)
-    throttle(fetchPokemon, 1000)
-}
+function analyzePokemon(pokemon: Pokemon): void {
+  let changePokemonAnalysis = false;
 
-function analyzePokemon(pokemon: P): void {
-  try {
-    let changePokemonAnalysis = false;
+  if (state.pokemon.id != pokemon.id && state.display) {
+    setTimeout(() => analyzePokemon(pokemon), 1000);
 
-    if (state.pokemon.id != pokemon.id && state.display) {
-      setTimeout(() => analyzePokemon(pokemon), 1000);
-
-      changePokemonAnalysis = true;
-    }
-
-    state.pokemon = pokemon;
-    state.display = !state.display;
-    state.displayEvolution = !state.displayEvolution;
-
-    if (!state.display && !changePokemonAnalysis)
-      state.pokemon = {};
-
-  } catch (e) {
-    console.log(e);
+    changePokemonAnalysis = true;
   }
+
+  state.pokemon = pokemon;
+  state.display = !state.display;
+  state.displayEvolution = !state.displayEvolution;
+
+  if (!state.display && !changePokemonAnalysis)
+    resetFields()
 }
+
+
+async function getEvolution(pokemonId: number) {
+  const response = await fetch(`https://pokeapi.co/api/v2/evolution-chain/${pokemonId}/`)
+  const res = await response.json()
+  console.log(res);
+
+}
+
 
 function addAbility(ability: string) {
-  try {
-    const newAbility = {
-      ability: {
-        name: ability,
-      },
-    };
+  const newAbility = {
+    ability: {
+      name: ability,
+    },
+  };
 
-    if (state.pokemon.abilities)
-      state.pokemon.abilities.push(newAbility);
-
-  } catch (e) {
-    console.log(e);
-  }
+  if (state.pokemon.abilities)
+    state.pokemon.abilities.push(newAbility);
 }
+
 
 function removeAbility(i: number) {
-  try {
-    if (state?.pokemon?.abilities?.[i])
-      state.pokemon.abilities.splice(i, 1);
-
-  } catch (e) {
-    console.log(e);
-  }
+  if (state?.pokemon?.abilities?.[i])
+    state.pokemon.abilities.splice(i, 1);
 }
 
-onMounted(() => fetchPokemon())
+
+function resetFields() {
+  state.pokemon = {
+    id: 0,
+  };
+}
+
 </script>
 
 <style scoped>

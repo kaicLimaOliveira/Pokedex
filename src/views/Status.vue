@@ -19,12 +19,12 @@ import { defineProps } from "vue"
 
 interface Props {
   pokemon: {
-    stats: Array<{
+    stats: {
       stat: {
         name: string;
       }
       base_stat: number;
-    }>
+    }[]
   }
 }
 

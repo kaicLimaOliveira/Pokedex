@@ -1,29 +1,14 @@
-export interface P {
-    id: number;
-}
-
-export interface Pokemon {
-    id: number;
-    name: string;
-    types: Array<{
-        type: {
-            name: string;
-        };
-        slot: number;
-    }>;
-}
-
-export interface State {
-    display: boolean;
-    displayEvolution: boolean;
-    pokemon: {
-        id?: number;
-        abilities?: Array<object>;
-        evolution?: number;
+interface Pokemon {
+  id: number;
+  name: string;
+  types: {
+    type: {
+      name: string;
     };
-    pokemons: Array<Pokemon>;
-    ordered: number;
-    namePokemon: string;
-    indexInitial: number;
-    indexFinal: number;
+    slot: number;
+  }[];
+}
+
+export type {
+  Pokemon,
 }
