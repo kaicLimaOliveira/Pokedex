@@ -80,7 +80,7 @@
           </div>
         </div>
 
-        <div class="row mt-5">
+        <div class="row mt-5 justify-content-center">
           <div ref="main" class="pokedex-catalogo d-flex flex-wrap justify-content-center" @scroll="loadOnScroll">
             <!-- início listagem dinâmica -->
             <TransitionGroup name="ordered">
@@ -103,9 +103,9 @@
               </div>
             </TransitionGroup>
             <!-- fim listagem dinâmica -->
-
-            <Loader :is-loading="state.isLoading"></Loader>
           </div>
+
+          <Loader :is-loading="state.isLoading"></Loader>
         </div>
       </div>
       <!-- fim lado direito -->
@@ -208,7 +208,7 @@ const loadOnScroll = throttle(() => {
   if (scrollPos >= bottom * .7 && state.canQuery) {
     state.canQuery = false
     state.indexInitial = state.indexInitial + 0;
-    state.indexFinal = state.indexFinal + 3;
+    state.indexFinal = state.indexFinal + 6;
     fetchPokemon()
   }
 
